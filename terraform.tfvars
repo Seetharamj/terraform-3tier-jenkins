@@ -1,0 +1,9 @@
+project              = "three-tier-app"
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidr   = "10.0.1.0/24"
+private_subnet_cidr  = "10.0.2.0/24"
+az                   = "us-east-1a"
+public_subnet_ids    = ["subnet-0123456789abcdef0", "subnet-abcdef0123456789"]
+asg_name             = "web-asg"
+db_username          = "admin"
+db_password          = "ChangeMeStrongPassword123!"
