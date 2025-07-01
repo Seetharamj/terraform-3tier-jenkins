@@ -1,61 +1,45 @@
 variable "project" {
-  default     = "myapp"
-  description = "Project name"
-}
-
-variable "region" {
-  default = "us-east-1"
+  description = "Project name prefix"
+  type        = string
 }
 
 variable "vpc_cidr" {
-  default = "10.0.0.0/16"
+  description = "CIDR block for VPC"
+  type        = string
 }
 
 variable "public_subnet_cidr" {
-  default = "10.0.1.0/24"
+  description = "CIDR block for public subnet"
+  type        = string
 }
 
 variable "private_subnet_cidr" {
-  default = "10.0.2.0/24"
+  description = "CIDR block for private subnet"
+  type        = string
 }
 
 variable "az" {
-  default = "us-east-1a"
+  description = "Availability Zone"
+  type        = string
 }
 
-variable "ami_id" {
-  default = "ami-0c02fb55956c7d316" # Amazon Linux 2
+variable "public_subnet_ids" {
+  description = "List of public subnet IDs for ALB"
+  type        = list(string)
 }
 
-variable "instance_type" {
-  default = "t2.micro"
+variable "asg_name" {
+  description = "Name of the Auto Scaling Group"
+  type        = string
 }
 
-variable "key_name" {
-  default = "your-key-name"
+variable "db_username" {
+  description = "Username for the RDS database"
+  type        = string
 }
 
-variable "rds_engine" {
-  default = "mysql"
-}
-
-variable "rds_engine_version" {
-  default = "8.0"
-}
-
-variable "rds_instance_class" {
-  default = "db.t3.micro"
-}
-
-variable "rds_username" {
-  default = "admin"
-}
-
-variable "rds_password" {
-  default = "mysecurepassword123"
-  sensitive = true
-}
-
-variable "rds_port" {
-  default = 3306
+variable "db_password" {
+  description = "Password for the RDS database"
+  type        = string
+  sensitive   = true
 }
