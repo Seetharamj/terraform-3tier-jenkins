@@ -1,10 +1,35 @@
+variable "project" {
+  description = "Project name prefix"
+  type        = string
+}
+
 variable "region" {
-  description = "AWS Region"
+  description = "AWS region"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "CIDR block for VPC"
+  type        = string
+}
+
+variable "public_subnet_cidr" {
+  description = "CIDR block for public subnet"
+  type        = string
+}
+
+variable "private_subnet_cidr" {
+  description = "CIDR block for private subnet"
+  type        = string
+}
+
+variable "az" {
+  description = "Availability Zone"
   type        = string
 }
 
 variable "ami_id" {
-  description = "AMI ID for EC2 instance"
+  description = "AMI ID for EC2"
   type        = string
 }
 
@@ -14,7 +39,17 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  description = "Key pair name for EC2 instance"
+  description = "Name of the EC2 key pair"
+  type        = string
+}
+
+variable "public_subnet_ids" {
+  description = "List of public subnet IDs"
+  type        = list(string)
+}
+
+variable "asg_name" {
+  description = "Auto Scaling Group name"
   type        = string
 }
 
@@ -29,11 +64,22 @@ variable "rds_engine_version" {
 }
 
 variable "rds_instance_class" {
-  description = "Instance class for RDS"
+  description = "RDS instance class"
   type        = string
 }
 
 variable "rds_port" {
-  description = "Port for RDS database"
+  description = "RDS port number"
   type        = number
+}
+
+variable "db_username" {
+  description = "Database username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Database password"
+  type        = string
+  sensitive   = true
 }
