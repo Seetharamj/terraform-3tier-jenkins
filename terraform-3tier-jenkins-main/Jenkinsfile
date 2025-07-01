@@ -1,0 +1,40 @@
+pipeline {
+  agent any
+
+  environment {
+    AWS_REGION = 'us-east-1'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+       git branch: 'main', url: 'https://github.com/Seetharamj/terraform-3tier-jenkins.git'
+
+      }
+    }
+
+    stage('Init') {
+      steps {
+        sh 'terraform init'
+      }
+    }
+
+    stage('Plan') {
+      steps {
+        sh 'terraform plan -out=tfplan'
+      }
+    }
+
+    stage('Apply') {
+      steps {
+        sh 'terraform apply -auto-approve tfplan'
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: '**/*.tf', fingerprint: true
+    }
+  }
+}
