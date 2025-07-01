@@ -1,3 +1,8 @@
+variable "project" {
+  description = "Project name prefix"
+  type        = string
+}
+
 variable "ami_id" {
   description = "AMI ID for EC2"
   type        = string
@@ -10,11 +15,6 @@ variable "instance_type" {
 
 variable "private_subnet_ids" {
   description = "List of private subnet IDs"
-  type        = list(string)
-}
-
-variable "security_group_ids" {
-  description = "List of security group IDs"
   type        = list(string)
 }
 
@@ -38,7 +38,7 @@ variable "desired_capacity" {
   type        = number
 }
 
-variable "project" {
-  description = "Project name prefix"
+variable "vpc_id" {
+  description = "VPC ID"
   type        = string
 }
