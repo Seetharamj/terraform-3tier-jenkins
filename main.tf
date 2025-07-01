@@ -5,7 +5,6 @@ terraform {
       version = "~> 5.0"
     }
   }
-
   required_version = ">= 1.3.0"
 }
 
@@ -23,9 +22,9 @@ module "vpc" {
   az                  = var.az
 }
 
-# Security Group Module (You should create it — or replace with hardcoded IDs)
+# Security Group Module
 module "sg" {
-  source = "./modules/security-groups" # if using SG module
+  source  = "./modules/security-groups"
   project = var.project
   vpc_id  = module.vpc.vpc_id
 }
@@ -63,7 +62,7 @@ module "rds" {
   engine                = var.rds_engine
   engine_version        = var.rds_engine_version
   instance_class        = var.rds_instance_class
-  username              = var.rds_username
-  password              = var.rds_password
+  username              = var.db_username
+  password              = var.db_password
   port                  = var.rds_port
 }
