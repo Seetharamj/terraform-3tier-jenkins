@@ -1,17 +1,10 @@
 variable "ami_id" {
-  description = "AMI ID for EC2 instance"
+  description = "AMI ID for EC2"
   type        = string
 }
 
 variable "instance_type" {
   description = "Instance type"
-  type        = string
-  default     = "t2.micro"
-}
-
-
-variable "key_name" {
-  description = "EC2 Key Pair"
   type        = string
 }
 
@@ -20,27 +13,18 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
-variable "security_group_id" {
-  description = "Security group ID"
+variable "security_group_ids" {
+  description = "List of security group IDs"
+  type        = list(string)
+}
+
+variable "key_name" {
+  description = "EC2 Key pair name"
   type        = string
 }
 
-variable "min_size" {
+variable "ec2_count" {
+  description = "Number of EC2 instances"
+  type        = number
   default     = 1
-  description = "Minimum number of instances"
-}
-
-variable "max_size" {
-  default     = 2
-  description = "Maximum number of instances"
-}
-
-variable "desired_capacity" {
-  default     = 1
-  description = "Desired number of instances"
-}
-
-variable "project" {
-  description = "Project name"
-  type        = string
 }
