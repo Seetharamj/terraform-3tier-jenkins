@@ -41,3 +41,20 @@ resource "aws_autoscaling_group" "app_asg" {
     version = "$Latest"
   }
 }
+resource "aws_launch_template" "app" {
+  name_prefix   = "${var.project}-lt"
+  image_id      = var.ami_id
+  instance_type = var.instance_type
+  key_name      = var.key_name
+  
+  network_interfaces {
+    security_groups = [var.security_group_id]
+  }
+  
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "${var.project}-app-instance"
+    }
+  }
+}
