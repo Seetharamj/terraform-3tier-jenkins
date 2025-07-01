@@ -17,10 +17,6 @@ resource "aws_security_group" "alb_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = {
-    Name = "${var.project}-alb-sg"
-  }
 }
 
 resource "aws_lb" "app_alb" {
@@ -29,10 +25,6 @@ resource "aws_lb" "app_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
   subnets            = var.public_subnet_ids
-
-  tags = {
-    Name = "${var.project}-alb"
-  }
 }
 
 resource "aws_lb_target_group" "app_tg" {
@@ -65,5 +57,5 @@ resource "aws_lb_listener" "http" {
 
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = var.asg_name
-  alb_target_group_arn   = aws_lb_target_group.app_tg.arn
+  lb_target_group_arn    = aws_lb_target_group.app_tg.arn
 }
