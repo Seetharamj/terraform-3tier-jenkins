@@ -30,7 +30,7 @@ resource "aws_lb" "app_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = var.public_subnet_ids
+  subnets            = var.public_subnet_ids  # ✅ This must be a list of at least 2 subnets in different AZs
 
   tags = {
     Name = "${var.project}-alb"
@@ -74,6 +74,5 @@ resource "aws_lb_listener" "http" {
 # Attach EC2 Auto Scaling Group to Target Group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = var.asg_name
-  lb_target_group_arn = aws_lb_target_group.app_tg.arn
-
+  lb_target_group_arn    = aws_lb_target_group.app_tg.arn
 }
