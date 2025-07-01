@@ -33,7 +33,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_instance" "rds" {
-  identifier              = "${var.project}-db"
+  identifier = "${var.project}-db"
   allocated_storage       = 20
   engine                  = var.engine
   engine_version          = var.engine_version
