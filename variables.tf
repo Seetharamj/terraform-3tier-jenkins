@@ -1,45 +1,39 @@
-variable "project" {
-  description = "Project name prefix"
+variable "region" {
+  description = "AWS region to deploy resources"
   type        = string
 }
 
-variable "vpc_cidr" {
-  description = "CIDR block for VPC"
+variable "ami_id" {
+  description = "AMI ID for EC2 instances"
   type        = string
 }
 
-variable "public_subnet_cidr" {
-  description = "CIDR block for public subnet"
+variable "instance_type" {
+  description = "EC2 instance type"
   type        = string
 }
 
-variable "private_subnet_cidr" {
-  description = "CIDR block for private subnet"
+variable "key_name" {
+  description = "Name of the EC2 key pair"
   type        = string
 }
 
-variable "az" {
-  description = "Availability Zone"
+variable "rds_engine" {
+  description = "Database engine for RDS"
   type        = string
 }
 
-variable "public_subnet_ids" {
-  description = "List of public subnet IDs for ALB"
-  type        = list(string)
-}
-
-variable "asg_name" {
-  description = "Name of the Auto Scaling Group"
+variable "rds_engine_version" {
+  description = "Engine version for RDS"
   type        = string
 }
 
-variable "db_username" {
-  description = "Username for the RDS database"
+variable "rds_instance_class" {
+  description = "RDS instance class"
   type        = string
 }
 
-variable "db_password" {
-  description = "Password for the RDS database"
-  type        = string
-  sensitive   = true
+variable "rds_port" {
+  description = "Port number for RDS"
+  type        = number
 }
