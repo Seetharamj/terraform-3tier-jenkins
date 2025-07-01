@@ -12,7 +12,7 @@ pipeline {
       }
     }
 
-    // ✅ OPTIONAL: Debug credentials (SAFE version — no slicing)
+    // ✅ OPTIONAL: Safe AWS Credential Check
     stage('Debug AWS Credentials') {
       steps {
         withCredentials([usernamePassword(
@@ -79,6 +79,12 @@ pipeline {
   }
 
   post {
+    success {
+      echo '✅ Terraform apply succeeded.'
+    }
+    failure {
+      echo '❌ Terraform pipeline failed. Check logs above.'
+    }
     always {
       archiveArtifacts artifacts: '**/*.tf', fingerprint: true
     }
