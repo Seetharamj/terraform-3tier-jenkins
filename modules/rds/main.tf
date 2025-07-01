@@ -13,11 +13,11 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description      = "Allow MySQL/PostgreSQL from EC2"
-    from_port        = var.port
-    to_port          = var.port
-    protocol         = "tcp"
-    security_groups  = [var.ec2_security_group_id]
+    description     = "Allow database access from EC2"
+    from_port       = var.port
+    to_port         = var.port
+    protocol        = "tcp"
+    security_groups = [var.ec2_security_group_id]
   }
 
   egress {
@@ -33,17 +33,17 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_instance" "rds" {
-  identifier = "${var.project}-db"
-  allocated_storage       = 20
-  engine                  = var.engine
-  engine_version          = var.engine_version
-  instance_class          = var.instance_class
-  username                = var.username
-  password                = var.password
-  db_subnet_group_name    = aws_db_subnet_group.rds_subnet_group.name
-  vpc_security_group_ids  = [aws_security_group.rds_sg.id]
-  skip_final_snapshot     = true
-  publicly_accessible     = false
+  identifier             = "${var.project}-db"
+  allocated_storage      = 20
+  engine                 = var.engine
+  engine_version         = var.engine_version
+  instance_class         = var.instance_class
+  username               = var.username
+  password               = var.password
+  db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  skip_final_snapshot    = true
+  publicly_accessible    = false
 
   tags = {
     Name = "${var.project}-rds"
