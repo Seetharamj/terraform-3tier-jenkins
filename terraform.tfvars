@@ -1,5 +1,5 @@
 # Project-wide
-project="3-tier-project"
+project = "tier3-project"
 region="us-east-1"
 
 # VPC and Subnets
