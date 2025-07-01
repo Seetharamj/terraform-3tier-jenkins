@@ -8,12 +8,17 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', 
-                url: 'https://github.com/Seetharamj/terraform-3tier-jenkins.git'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: 'main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/Seetharamj/terraform-3tier-jenkins.git'
+                    ]]
+                ])
             }
         }
         
-        stage('Terraform Init/Plan/Apply') {
+        stage('Terraform Init/Validate') {
             steps {
                 withCredentials([[
                     $class: 'UsernamePasswordMultiBinding',
@@ -22,14 +27,37 @@ pipeline {
                     passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                 ]]) {
                     sh '''
-                        echo "✅ AWS Credentials Loaded"
-                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                        export AWS_REGION=us-east-1
-                        
                         terraform init -no-color
                         terraform validate
+                    '''
+                }
+            }
+        }
+        
+        stage('Terraform Plan') {
+            steps {
+                withCredentials([[
+                    $class: 'UsernamePasswordMultiBinding',
+                    credentialsId: 'AWS_CREDS',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh '''
                         terraform plan -out=tfplan -no-color
+                    '''
+                }
+            }
+        }
+        
+        stage('Terraform Apply') {
+            steps {
+                withCredentials([[
+                    $class: 'UsernamePasswordMultiBinding',
+                    credentialsId: 'AWS_CREDS',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh '''
                         terraform apply -auto-approve -no-color tfplan
                     '''
                 }
@@ -41,6 +69,12 @@ pipeline {
         always {
             archiveArtifacts artifacts: '**/*.tfplan', allowEmptyArchive: true
             cleanWs()
+        }
+        success {
+            echo 'Terraform deployment completed successfully'
+        }
+        failure {
+            echo 'Terraform deployment failed'
         }
     }
 }
