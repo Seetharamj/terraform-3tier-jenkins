@@ -39,7 +39,7 @@ variable "desired_capacity" {
 }
 
 variable "vpc_id" {
-  description = "VPC ID"
+  description = "The ID of the VPC"
   type        = string
 }
 
