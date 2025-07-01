@@ -6,8 +6,8 @@ resource "aws_launch_template" "app" {
 
   network_interfaces {
     associate_public_ip_address = false
-    subnet_id                   = var.private_subnet_id
-    security_groups             = [var.security_group_id]
+    subnet_id                   = var.private_subnet_ids[0]
+    security_groups             = var.security_group_ids
   }
 
   tag_specifications {
@@ -19,13 +19,12 @@ resource "aws_launch_template" "app" {
 }
 
 resource "aws_autoscaling_group" "app_asg" {
-  name                      = "${var.project}-asg"
-  min_size                  = var.min_size
-  max_size                  = var.max_size
-  desired_capacity          = var.desired_capacity
-  vpc_zone_identifier       = [var.private_subnet_id]
-  health_check_type         = "EC2"
-  health_check_grace_period = 300
+  name                = "${var.project}-asg"
+  min_size            = var.min_size
+  max_size            = var.max_size
+  desired_capacity    = var.desired_capacity
+  vpc_zone_identifier = var.private_subnet_ids
+  health_check_type   = "EC2"
 
   launch_template {
     id      = aws_launch_template.app.id
@@ -34,9 +33,7 @@ resource "aws_autoscaling_group" "app_asg" {
 
   tag {
     key                 = "Name"
-    value               = "${var.project}-asg-ec2"
+    value               = "${var.project}-asg"
     propagate_at_launch = true
   }
-
-  depends_on = [aws_launch_template.app]
 }
