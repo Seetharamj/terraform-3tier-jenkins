@@ -15,9 +15,9 @@ variable "key_name" {
   type        = string
 }
 
-variable "private_subnet_id" {
-  description = "Private subnet ID where EC2 will be deployed"
-  type        = string
+variable "private_subnet_ids" {
+  description = "List of private subnet IDs"
+  type        = list(string)
 }
 
 variable "security_group_id" {
