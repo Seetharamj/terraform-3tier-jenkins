@@ -23,8 +23,22 @@ variable "key_name" {
   type        = string
 }
 
-variable "ec2_count" {
-  description = "Number of EC2 instances"
+variable "min_size" {
+  description = "Minimum number of instances"
   type        = number
-  default     = 1
+}
+
+variable "max_size" {
+  description = "Maximum number of instances"
+  type        = number
+}
+
+variable "desired_capacity" {
+  description = "Desired number of instances"
+  type        = number
+}
+
+variable "project" {
+  description = "Project name prefix"
+  type        = string
 }
