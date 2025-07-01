@@ -3,6 +3,7 @@ pipeline {
 
   environment {
     TF_LOG = "ERROR"
+    AWS_REGION = "us-east-1"  // Set your preferred region here
   }
 
   stages {
@@ -12,16 +13,32 @@ pipeline {
       }
     }
 
+    stage('Verify AWS Credentials') {
+      steps {
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: 'aws-creds',
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+        ]]) {
+          sh '''
+            echo "✅ Verifying AWS credentials..."
+            aws sts get-caller-identity || exit 1
+            echo "✅ AWS credentials are valid"
+          '''
+        }
+      }
+    }
+
     stage('Terraform Init') {
       steps {
-        withCredentials([usernamePassword(
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
           credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-        )]) {
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+        ]]) {
           sh '''
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             terraform init
           '''
         }
@@ -30,16 +47,13 @@ pipeline {
 
     stage('Terraform Plan') {
       steps {
-        withCredentials([usernamePassword(
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
           credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-        )]) {
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+        ]]) {
           sh '''
-            echo "✅ Loaded AWS credentials"
-            echo "Access Key: $AWS_ACCESS_KEY_ID"
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             terraform plan -out=tfplan
           '''
         }
@@ -48,14 +62,13 @@ pipeline {
 
     stage('Terraform Apply') {
       steps {
-        withCredentials([usernamePassword(
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
           credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-        )]) {
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+        ]]) {
           sh '''
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             terraform apply -auto-approve tfplan
           '''
         }
