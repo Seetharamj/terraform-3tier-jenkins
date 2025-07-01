@@ -1,4 +1,4 @@
-output "app_sg_id" {
-  value = aws_security_group.app_sg.id
+output "ec2_sg_id" {
+  description = "Security Group ID for EC2"
+  value       = aws_security_group.app_sg.id
 }
-
