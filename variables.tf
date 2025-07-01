@@ -9,27 +9,29 @@ variable "region" {
 }
 
 variable "vpc_cidr" {
-  description = "CIDR block for VPC"
+  description = "CIDR block for the VPC"
   type        = string
 }
 
-variable "public_subnet_cidr" {
-  description = "CIDR block for public subnet"
-  type        = string
+# ✅ Updated to support multiple AZs and subnets
+variable "public_subnet_cidrs" {
+  description = "List of CIDR blocks for public subnets"
+  type        = list(string)
 }
 
-variable "private_subnet_cidr" {
-  description = "CIDR block for private subnet"
-  type        = string
+variable "private_subnet_cidrs" {
+  description = "List of CIDR blocks for private subnets"
+  type        = list(string)
 }
 
-variable "az" {
-  description = "Availability Zone"
-  type        = string
+variable "azs" {
+  description = "List of Availability Zones"
+  type        = list(string)
 }
 
+# EC2 Variables
 variable "ami_id" {
-  description = "AMI ID for EC2"
+  description = "AMI ID for EC2 instances"
   type        = string
 }
 
@@ -43,16 +45,7 @@ variable "key_name" {
   type        = string
 }
 
-variable "public_subnet_ids" {
-  description = "List of public subnet IDs"
-  type        = list(string)
-}
-
-variable "asg_name" {
-  description = "Auto Scaling Group name"
-  type        = string
-}
-
+# RDS Variables
 variable "rds_engine" {
   description = "RDS database engine"
   type        = string
