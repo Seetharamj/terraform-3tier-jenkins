@@ -28,14 +28,14 @@ module "sg" {
 }
 
 module "ec2" {
-  source               = "./modules/ec2"
+  source             = "./modules/ec2"
   ami_id               = var.ami_id
   instance_type        = var.instance_type
   key_name             = var.key_name
   private_subnet_ids   = module.vpc.private_subnet_ids
-  min_size             = var.min_size
-  max_size             = var.max_size
-  desired_capacity     = var.desired_capacity
+  min_size          = var.min_size
+  max_size          = var.max_size
+  desired_capacity  = var.desired_capacity
   project              = var.project
   vpc_id               = module.vpc.vpc_id  # This is the missing argument
   security_group_id    = module.sg.ec2_sg_id
