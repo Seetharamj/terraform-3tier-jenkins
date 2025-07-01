@@ -13,6 +13,7 @@ variable "instance_type" {
   type        = string
 }
 
+# Keep only one declaration (remove the duplicate)
 variable "private_subnet_ids" {
   description = "List of private subnet IDs"
   type        = list(string)
