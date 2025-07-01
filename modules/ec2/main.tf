@@ -29,3 +29,15 @@ resource "aws_security_group" "app_sg" {
     Name = "${var.project}-app-sg"
   }
 }
+resource "aws_autoscaling_group" "app_asg" {
+  name                = "${var.project}-asg"
+  min_size            = var.min_size
+  max_size            = var.max_size
+  desired_capacity    = var.desired_capacity
+  vpc_zone_identifier = var.private_subnet_ids
+  
+  launch_template {
+    id      = aws_launch_template.app.id
+    version = "$Latest"
+  }
+}
