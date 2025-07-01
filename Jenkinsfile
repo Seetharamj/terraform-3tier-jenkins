@@ -91,19 +91,20 @@ pipeline {
         }
     }
     
-   post {
-  always {
-    archiveArtifacts artifacts: '**/*.tf', allowEmptyArchive: true
-    cleanWs()
-  }
-  failure {
-    script {
-      try {
-        sh 'terraform validate -no-color'
-        sh 'terraform state list || echo "No state exists yet - this is normal for first runs"'
-      } catch (Exception e) {
-        echo "Debugging failed: ${e}"
-      }
+    post {
+        always {
+            archiveArtifacts artifacts: '**/*.tf', allowEmptyArchive: true
+            cleanWs()
+        }
+        failure {
+            script {
+                try {
+                    sh 'terraform validate -no-color'
+                    sh 'terraform state list || echo "No state exists yet - this is normal for first runs"'
+                } catch (Exception e) {
+                    echo "Debugging failed: ${e}"
+                }
+            }
+        }
     }
-  }
 }
