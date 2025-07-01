@@ -1,6 +1,6 @@
 # Project-wide
-project = "3-Tier-Project"
-region  = "us-east-1"
+project="3-tier-project"
+region="us-east-1"
 
 # VPC and Subnets
 vpc_cidr            = "10.0.0.0/16"
