@@ -45,7 +45,8 @@ module "alb" {
   project           = var.project
   vpc_id            = module.vpc.vpc_id
   public_subnet_ids = module.vpc.public_subnet_ids
-  ec2_sg_id         = module.sg.ec2_sg_id
+  asg_name          = module.ec2.asg_name
+  # Security group for ALB is created within the ALB module
 }
 
 module "rds" {
