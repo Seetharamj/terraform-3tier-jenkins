@@ -24,20 +24,17 @@ variable "key_name" {
 }
 
 variable "min_size" {
-  description = "Minimum number of instances"
-  type        = number
+  type = number
 }
-
 variable "max_size" {
-  description = "Maximum number of instances"
-  type        = number
+  type = number
 }
-
 variable "desired_capacity" {
-  description = "Desired number of instances"
-  type        = number
+  type = number
 }
-
+variable "private_subnet_ids" {
+  type = list(string)
+}
 variable "vpc_id" {
   description = "The ID of the VPC"
   type        = string
