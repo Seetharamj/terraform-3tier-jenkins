@@ -6,9 +6,26 @@ pipeline {
   }
 
   stages {
-    stage('Checkout') {
+    stage('Checkout Code') {
       steps {
         git branch: 'main', url: 'https://github.com/Seetharamj/terraform-3tier-jenkins.git'
+      }
+    }
+
+    // ✅ OPTIONAL: Debug AWS credentials (REMOVE this in production!)
+    stage('Debug AWS Credentials') {
+      steps {
+        withCredentials([usernamePassword(
+          credentialsId: 'aws-creds',
+          usernameVariable: 'AWS_ACCESS_KEY_ID',
+          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          sh '''
+            echo "Testing AWS credentials..."
+            echo "Key: $AWS_ACCESS_KEY_ID"
+            echo "Secret: ${AWS_SECRET_ACCESS_KEY:0:4}********"
+          '''
+        }
       }
     }
 
@@ -19,7 +36,11 @@ pipeline {
           usernameVariable: 'AWS_ACCESS_KEY_ID',
           passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
-          sh 'terraform init'
+          sh '''
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            terraform init
+          '''
         }
       }
     }
@@ -31,7 +52,11 @@ pipeline {
           usernameVariable: 'AWS_ACCESS_KEY_ID',
           passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
-          sh 'terraform plan -out=tfplan'
+          sh '''
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            terraform plan -out=tfplan
+          '''
         }
       }
     }
@@ -43,7 +68,11 @@ pipeline {
           usernameVariable: 'AWS_ACCESS_KEY_ID',
           passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
-          sh 'terraform apply -auto-approve tfplan'
+          sh '''
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            terraform apply -auto-approve tfplan
+          '''
         }
       }
     }
