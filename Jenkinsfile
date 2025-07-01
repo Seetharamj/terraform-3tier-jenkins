@@ -12,23 +12,6 @@ pipeline {
       }
     }
 
-    // ✅ OPTIONAL: Safe AWS Credential Check
-    stage('Debug AWS Credentials') {
-      steps {
-        withCredentials([usernamePassword(
-          credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-        )]) {
-          sh '''
-            echo "✅ AWS credentials loaded"
-            echo "Access Key: $AWS_ACCESS_KEY_ID"
-            echo "Secret Key: [HIDDEN FOR SECURITY]"
-          '''
-        }
-      }
-    }
-
     stage('Terraform Init') {
       steps {
         withCredentials([usernamePassword(
@@ -37,6 +20,7 @@ pipeline {
           passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
           sh '''
+            echo "Running terraform init"
             export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             terraform init
@@ -52,12 +36,12 @@ pipeline {
           usernameVariable: 'AWS_ACCESS_KEY_ID',
           passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
-         sh '''
-       export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-       export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-       terraform plan -out=tfplan
-            '''
-
+          sh '''
+            echo "Running terraform plan"
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            terraform plan -out=tfplan
+          '''
         }
       }
     }
@@ -70,6 +54,7 @@ pipeline {
           passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
           sh '''
+            echo "Running terraform apply"
             export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             terraform apply -auto-approve tfplan
@@ -80,12 +65,6 @@ pipeline {
   }
 
   post {
-    success {
-      echo '✅ Terraform apply succeeded.'
-    }
-    failure {
-      echo '❌ Terraform pipeline failed. Check logs above.'
-    }
     always {
       archiveArtifacts artifacts: '**/*.tf', fingerprint: true
     }
