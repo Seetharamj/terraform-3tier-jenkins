@@ -30,22 +30,23 @@ pipeline {
       }
     }
 
-    stage('Terraform Plan') {
-      steps {
-        withCredentials([usernamePassword(
-          credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-        )]) {
-          sh '''
-            export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
-            export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
-            export AWS_REGION="$AWS_REGION"
-            terraform plan -out=tfplan
-          '''
-        }
-      }
+   stage('Terraform Plan') {
+  steps {
+    withCredentials([usernamePassword(
+      credentialsId: 'aws-creds',
+      usernameVariable: 'TF_AWS_ACCESS_KEY_ID',
+      passwordVariable: 'TF_AWS_SECRET_ACCESS_KEY'
+    )]) {
+      sh '''
+        echo "✅ AWS Credentials Loaded"
+        export AWS_ACCESS_KEY_ID=$TF_AWS_ACCESS_KEY_ID
+        export AWS_SECRET_ACCESS_KEY=$TF_AWS_SECRET_ACCESS_KEY
+        export AWS_REGION=us-east-1
+        terraform plan -out=tfplan
+      '''
     }
+  }
+}
 
     stage('Terraform Apply') {
       steps {
