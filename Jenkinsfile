@@ -12,7 +12,7 @@ pipeline {
       }
     }
 
-    // ✅ OPTIONAL: Debug AWS credentials (REMOVE this in production!)
+    // ✅ OPTIONAL: Debug credentials (SAFE version — no slicing)
     stage('Debug AWS Credentials') {
       steps {
         withCredentials([usernamePassword(
@@ -21,9 +21,9 @@ pipeline {
           passwordVariable: 'AWS_SECRET_ACCESS_KEY'
         )]) {
           sh '''
-            echo "Testing AWS credentials..."
-            echo "Key: $AWS_ACCESS_KEY_ID"
-            echo "Secret: ${AWS_SECRET_ACCESS_KEY:0:4}********"
+            echo "✅ AWS credentials loaded"
+            echo "Access Key: $AWS_ACCESS_KEY_ID"
+            echo "Secret Key: [HIDDEN FOR SECURITY]"
           '''
         }
       }
