@@ -1,3 +1,34 @@
+resource "aws_security_group" "app_sg" {
+  name        = "${var.project}-app-sg"
+  description = "Allow HTTP and SSH"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project}-app-sg"
+  }
+}
+
 resource "aws_launch_template" "app" {
   name_prefix   = "${var.project}-lt-"
   image_id      = var.ami_id
@@ -7,7 +38,7 @@ resource "aws_launch_template" "app" {
   network_interfaces {
     associate_public_ip_address = false
     subnet_id                   = var.private_subnet_ids[0]
-    security_groups             = var.security_group_ids
+    security_groups             = [aws_security_group.app_sg.id]
   }
 
   tag_specifications {
