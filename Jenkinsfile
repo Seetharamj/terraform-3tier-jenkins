@@ -1,11 +1,11 @@
 pipeline {
     agent any
-    
+
     environment {
         AWS_REGION = 'us-east-1'
         TF_LOG = 'DEBUG'
     }
-    
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -25,7 +25,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Terraform Init/Validate') {
             steps {
                 script {
@@ -38,7 +38,7 @@ pipeline {
                         sh '''
                             echo "=== TERRAFORM INIT ==="
                             terraform init -no-color -input=false
-                            
+
                             echo "=== VALIDATION ==="
                             terraform validate
                         '''
@@ -46,7 +46,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Terraform Plan') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
@@ -68,7 +68,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Terraform Apply') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
@@ -90,19 +90,29 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
             archiveArtifacts artifacts: '**/*.tf', allowEmptyArchive: true
             cleanWs()
         }
+
         failure {
             script {
-                try {
-                    sh 'terraform validate -no-color'
-                    sh 'terraform state list || echo "No state exists yet - this is normal for first runs"'
-                } catch (Exception e) {
-                    echo "Debugging failed: ${e}"
+                echo "Pipeline failed. Attempting minimal debug info..."
+
+                // Check if .terraform directory exists (proxy for init success)
+                if (fileExists(".terraform")) {
+                    echo "Terraform init seems to have run, checking state..."
+
+                    if (fileExists("terraform.tfstate")) {
+                        echo "State file exists. Listing state..."
+                        sh 'terraform state list'
+                    } else {
+                        echo "No terraform.tfstate found. Skipping state list."
+                    }
+                } else {
+                    echo "Terraform not initialized. Skipping state list check."
                 }
             }
         }
