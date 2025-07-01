@@ -78,6 +78,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.nat.id
   }
 
+
   tags = {
     Name = "${var.project}-private-rt"
   }
