@@ -42,3 +42,8 @@ variable "vpc_id" {
   description = "VPC ID"
   type        = string
 }
+
+variable "security_group_id" {
+  description = "The security group ID to associate with EC2 instances"
+  type        = string
+}
