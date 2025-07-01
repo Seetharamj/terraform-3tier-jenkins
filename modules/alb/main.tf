@@ -1,4 +1,3 @@
-# Security Group for ALB
 resource "aws_security_group" "alb_sg" {
   name        = "${var.project}-alb-sg"
   description = "Allow HTTP traffic"
@@ -24,20 +23,18 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
-# Application Load Balancer
 resource "aws_lb" "app_alb" {
   name               = "${var.project}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = var.public_subnet_ids  # ✅ This must be a list of at least 2 subnets in different AZs
+  subnets            = var.public_subnet_ids
 
   tags = {
     Name = "${var.project}-alb"
   }
 }
 
-# Target Group for EC2 instances
 resource "aws_lb_target_group" "app_tg" {
   name     = "${var.project}-tg"
   port     = 80
@@ -53,13 +50,8 @@ resource "aws_lb_target_group" "app_tg" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
-
-  tags = {
-    Name = "${var.project}-tg"
-  }
 }
 
-# Listener
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app_alb.arn
   port              = 80
@@ -71,8 +63,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# Attach EC2 Auto Scaling Group to Target Group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = var.asg_name
-  lb_target_group_arn    = aws_lb_target_group.app_tg.arn
+  alb_target_group_arn   = aws_lb_target_group.app_tg.arn
 }
