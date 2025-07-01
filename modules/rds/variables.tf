@@ -21,19 +21,16 @@ variable "ec2_security_group_id" {
 variable "engine" {
   description = "RDS engine (e.g., mysql or postgres)"
   type        = string
-  default     = "mysql"
 }
 
 variable "engine_version" {
   description = "Engine version"
   type        = string
-  default     = "8.0"
 }
 
 variable "instance_class" {
   description = "Instance type"
   type        = string
-  default     = "db.t3.micro"
 }
 
 variable "username" {
@@ -50,5 +47,4 @@ variable "password" {
 variable "port" {
   description = "Port number (3306 for MySQL, 5432 for PostgreSQL)"
   type        = number
-  default     = 3306
 }
