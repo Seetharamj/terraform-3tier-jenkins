@@ -2,32 +2,49 @@ pipeline {
   agent any
 
   environment {
-    AWS_REGION = 'us-east-1'
+    TF_LOG = "ERROR"
   }
 
   stages {
     stage('Checkout') {
       steps {
-       git branch: 'main', url: 'https://github.com/Seetharamj/terraform-3tier-jenkins.git'
-
+        git branch: 'main', url: 'https://github.com/Seetharamj/terraform-3tier-jenkins.git'
       }
     }
 
-    stage('Init') {
+    stage('Terraform Init') {
       steps {
-        sh 'terraform init'
+        withCredentials([usernamePassword(
+          credentialsId: 'aws-creds',
+          usernameVariable: 'AWS_ACCESS_KEY_ID',
+          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          sh 'terraform init'
+        }
       }
     }
 
-    stage('Plan') {
+    stage('Terraform Plan') {
       steps {
-        sh 'terraform plan -out=tfplan'
+        withCredentials([usernamePassword(
+          credentialsId: 'aws-creds',
+          usernameVariable: 'AWS_ACCESS_KEY_ID',
+          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          sh 'terraform plan -out=tfplan'
+        }
       }
     }
 
-    stage('Apply') {
+    stage('Terraform Apply') {
       steps {
-        sh 'terraform apply -auto-approve tfplan'
+        withCredentials([usernamePassword(
+          credentialsId: 'aws-creds',
+          usernameVariable: 'AWS_ACCESS_KEY_ID',
+          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          sh 'terraform apply -auto-approve tfplan'
+        }
       }
     }
   }
