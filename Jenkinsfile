@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         AWS_REGION = 'us-east-1'
-        TF_LOG     = 'DEBUG'  // Enable Terraform debug logging
+        TF_LOG = 'DEBUG'
     }
     
     stages {
@@ -21,7 +21,7 @@ pipeline {
                             $class: 'CleanBeforeCheckout'
                         ]]
                     ])
-                    sh 'ls -la'  // Debug: Show directory contents
+                    sh 'ls -la'
                 }
             }
         }
@@ -35,23 +35,12 @@ pipeline {
                         usernameVariable: 'AWS_ACCESS_KEY_ID',
                         passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                     ]]) {
-                        echo "DEBUG: Initializing Terraform with AWS credentials"
                         sh '''
-                            echo "Current workspace:"
-                            pwd
-                            ls -la
-                            
-                            echo "Terraform version:"
-                            terraform version
-                            
-                            echo "Initializing Terraform..."
+                            echo "=== TERRAFORM INIT ==="
                             terraform init -no-color -input=false
                             
-                            echo "DEBUG: Terraform providers"
-                            terraform providers
-                            
-                            echo "Validating configuration..."
-                            terraform validate -json | jq '.'  # Pretty-print validation
+                            echo "=== VALIDATION ==="
+                            terraform validate
                         '''
                     }
                 }
@@ -59,6 +48,9 @@ pipeline {
         }
         
         stage('Terraform Plan') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
                     withCredentials([[
@@ -67,26 +59,9 @@ pipeline {
                         usernameVariable: 'AWS_ACCESS_KEY_ID',
                         passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                     ]]) {
-                        echo "DEBUG: Generating Terraform plan"
                         sh '''
-                            echo "Current state:"
-                            terraform state list
-                            
-                            echo "Generating plan..."
-                            terraform plan -out=tfplan -no-color -input=false -detailed-exitcode
-                            PLAN_EXIT_CODE=$?
-                            
-                            echo "Plan exit code: $PLAN_EXIT_CODE"
-                            if [ $PLAN_EXIT_CODE -eq 1 ]; then
-                                echo "ERROR: Plan failed"
-                                exit 1
-                            elif [ $PLAN_EXIT_CODE -eq 2 ]; then
-                                echo "INFO: Changes detected"
-                            else
-                                echo "INFO: No changes"
-                            fi
-                            
-                            echo "Plan file details:"
+                            echo "=== GENERATING PLAN ==="
+                            terraform plan -out=tfplan -no-color -input=false
                             ls -la tfplan
                         '''
                     }
@@ -95,6 +70,9 @@ pipeline {
         }
         
         stage('Terraform Apply') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
                     withCredentials([[
@@ -103,16 +81,9 @@ pipeline {
                         usernameVariable: 'AWS_ACCESS_KEY_ID',
                         passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                     ]]) {
-                        echo "DEBUG: Applying Terraform changes"
                         sh '''
-                            echo "Applying plan..."
+                            echo "=== APPLYING CHANGES ==="
                             terraform apply -auto-approve -no-color -input=false tfplan
-                            
-                            echo "Apply completed. Current resources:"
-                            terraform state list
-                            
-                            echo "Output values:"
-                            terraform output -json | jq '.'
                         '''
                     }
                 }
@@ -122,40 +93,17 @@ pipeline {
     
     post {
         always {
-            script {
-                echo "DEBUG: Pipeline completed with status ${currentBuild.currentResult}"
-                archiveArtifacts artifacts: '**/*.tfplan,**/.terraform/**/*.log', allowEmptyArchive: true
-                junit '**/terraform-test-results.xml'  // If you have test results
-                
-                echo "Collecting debug info..."
-                sh '''
-                    echo "=== FINAL WORKSPACE CONTENTS ==="
-                    ls -laR
-                    
-                    echo "=== TERRAFORM STATE ==="
-                    terraform show -no-color || true
-                    
-                    echo "=== TF LOGS ==="
-                    cat .terraform/*.log || true
-                '''
-                
-                cleanWs()
-            }
-        }
-        success {
-            slackSend color: 'good', message: "Terraform deployment succeeded: ${env.BUILD_URL}"
+            archiveArtifacts artifacts: '**/*.tfplan', allowEmptyArchive: true
+            sh 'terraform show -no-color > terraform-state.txt'
+            archiveArtifacts artifacts: 'terraform-state.txt', allowEmptyArchive: true
+            cleanWs()
         }
         failure {
-            slackSend color: 'danger', message: "Terraform deployment failed: ${env.BUILD_URL}"
             sh '''
-                echo "=== ERROR DEBUGGING ==="
-                terraform validate -json | jq '.' > validation.json
-                cat validation.json
-                
-                echo "Recent logs:"
-                tail -n 100 .terraform/*.log || true
+                echo "=== FAILURE DEBUGGING ==="
+                terraform validate -no-color
+                terraform state list
             '''
-            archiveArtifacts artifacts: 'validation.json,.terraform/*.log', allowEmptyArchive: true
         }
     }
 }
