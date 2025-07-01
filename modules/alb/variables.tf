@@ -7,7 +7,7 @@ variable "vpc_id" {
 }
 
 variable "public_subnet_ids" {
-  type = list(string)  # ✅ Must be a list of 2+ subnets in different AZs
+  type = list(string)
 }
 
 variable "asg_name" {
