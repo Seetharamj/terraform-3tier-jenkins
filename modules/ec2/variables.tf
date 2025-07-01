@@ -33,9 +33,7 @@ variable "max_size" {
 variable "desired_capacity" {
   type = number
 }
-variable "private_subnet_ids" {
-  type = list(string)
-}
+
 variable "vpc_id" {
   description = "The ID of the VPC"
   type        = string
