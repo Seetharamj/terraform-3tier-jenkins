@@ -16,13 +16,12 @@ pipeline {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+          usernameVariable: 'TF_AWS_ACCESS_KEY_ID',
+          passwordVariable: 'TF_AWS_SECRET_ACCESS_KEY'
         )]) {
           sh '''
-            echo "Running terraform init"
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            export AWS_ACCESS_KEY_ID=$TF_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$TF_AWS_SECRET_ACCESS_KEY
             terraform init
           '''
         }
@@ -33,13 +32,12 @@ pipeline {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+          usernameVariable: 'TF_AWS_ACCESS_KEY_ID',
+          passwordVariable: 'TF_AWS_SECRET_ACCESS_KEY'
         )]) {
           sh '''
-            echo "Running terraform plan"
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            export AWS_ACCESS_KEY_ID=$TF_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$TF_AWS_SECRET_ACCESS_KEY
             terraform plan -out=tfplan
           '''
         }
@@ -50,13 +48,12 @@ pipeline {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'aws-creds',
-          usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+          usernameVariable: 'TF_AWS_ACCESS_KEY_ID',
+          passwordVariable: 'TF_AWS_SECRET_ACCESS_KEY'
         )]) {
           sh '''
-            echo "Running terraform apply"
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            export AWS_ACCESS_KEY_ID=$TF_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$TF_AWS_SECRET_ACCESS_KEY
             terraform apply -auto-approve tfplan
           '''
         }
