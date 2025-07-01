@@ -33,11 +33,11 @@ module "ec2" {
   instance_type        = var.instance_type
   key_name             = var.key_name
   private_subnet_ids   = module.vpc.private_subnet_ids
-  security_group_ids   = [module.sg.ec2_sg_id]
   min_size             = 1
   max_size             = 2
   desired_capacity     = 1
   project              = var.project
+  vpc_id               = module.vpc.vpc_id
 }
 
 module "alb" {
