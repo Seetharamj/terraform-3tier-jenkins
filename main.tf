@@ -12,52 +12,47 @@ provider "aws" {
   region = var.region
 }
 
-# VPC Module
 module "vpc" {
   source               = "./modules/vpc"
   project              = var.project
   vpc_cidr             = var.vpc_cidr
-  public_subnet_cidrs  = var.public_subnet_cidrs   # ✅ list(string)
-  private_subnet_cidrs = var.private_subnet_cidrs  # ✅ list(string)
-  azs                  = var.azs                   # ✅ list(string)
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  private_subnet_cidrs = var.private_subnet_cidrs
+  azs                  = var.azs
 }
 
-# Security Group Module
 module "sg" {
   source  = "./modules/security-groups"
   project = var.project
   vpc_id  = module.vpc.vpc_id
 }
 
-# EC2 Module
 module "ec2" {
-  source             = "./modules/ec2"
-  ami_id             = var.ami_id
-  instance_type      = var.instance_type
-  key_name           = var.key_name
-  private_subnet_ids = module.vpc.private_subnet_ids  # ✅ list of subnets
-  security_group_id  = module.sg.ec2_sg_id
-  min_size           = 1
-  max_size           = 2
-  desired_capacity   = 1
-  project            = var.project
+  source               = "./modules/ec2"
+  ami_id               = var.ami_id
+  instance_type        = var.instance_type
+  key_name             = var.key_name
+  private_subnet_ids   = module.vpc.private_subnet_ids
+  security_group_ids   = [module.sg.ec2_sg_id]
+  min_size             = 1
+  max_size             = 2
+  desired_capacity     = 1
+  project              = var.project
 }
 
-# ALB Module
 module "alb" {
   source            = "./modules/alb"
   project           = var.project
   vpc_id            = module.vpc.vpc_id
-  public_subnet_ids = module.vpc.public_subnet_ids   # ✅ list
-  asg_name          = module.ec2.asg_name
+  public_subnet_ids = module.vpc.public_subnet_ids
+  ec2_sg_id         = module.sg.ec2_sg_id
 }
 
-# RDS Module
 module "rds" {
   source                = "./modules/rds"
   project               = var.project
   vpc_id                = module.vpc.vpc_id
-  private_subnet_ids    = module.vpc.private_subnet_ids  # ✅ list
+  private_subnet_ids    = module.vpc.private_subnet_ids
   ec2_security_group_id = module.sg.ec2_sg_id
   engine                = var.rds_engine
   engine_version        = var.rds_engine_version
