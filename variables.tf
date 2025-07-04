@@ -102,8 +102,8 @@ variable "desired_capacity" {
   default     = 1
 }
 
-# ✅ Add this missing variable
 variable "environment" {
-  description = "dev"
+  description = "Environment type"
   type        = string
+  default     = "dev"
 }
