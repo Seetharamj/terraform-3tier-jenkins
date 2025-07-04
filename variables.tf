@@ -83,6 +83,7 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
 variable "min_size" {
   description = "Minimum number of instances in ASG"
   type        = number
@@ -101,3 +102,8 @@ variable "desired_capacity" {
   default     = 1
 }
 
+# ✅ Add this missing variable
+variable "environment" {
+  description = "dev"
+  type        = string
+}
