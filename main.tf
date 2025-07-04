@@ -23,10 +23,12 @@ module "vpc" {
 }
 
 module "sg" {
-  source  = "./modules/security-groups"
-  project = var.project
-  vpc_id  = module.vpc.vpc_id
+  source      = "./modules/security-groups"
+  vpc_id      = module.vpc.vpc_id
+  environment = var.environment
+  project     = var.project
 }
+
 
 module "ec2" {
   source             = "./modules/ec2"
