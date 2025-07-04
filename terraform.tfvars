@@ -24,4 +24,4 @@ rds_engine_version = "8.0"
 rds_instance_class = "db.t3.micro"
 rds_port = 3306
 db_username = "admin"
-db_password = "Secert@123" 
+db_password = "Seetharam123" 
