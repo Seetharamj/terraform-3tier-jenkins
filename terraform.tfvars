@@ -9,7 +9,7 @@ private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
 azs = ["us-east-1a", "us-east-1b"]
 
 # EC2 Configuration
-ami_id = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI (replace with your desired AMI)
+ami_id = "ami-05ffe3c48a9991133"  # Amazon Linux 2 AMI (replace with your desired AMI)
 instance_type = "t3.micro"
 key_name = "your-key-pair-name"    # Replace with your EC2 key pair name
 
