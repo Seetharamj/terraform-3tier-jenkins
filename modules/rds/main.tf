@@ -1,9 +1,14 @@
+// Generate a random suffix to avoid name collisions
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "${var.project}-rds-subnet-group"
+  name       = "${var.project}-rds-subnet-group-${random_id.suffix.hex}"
   subnet_ids = var.private_subnet_ids
 
   tags = {
-    Name = "${var.project}-rds-subnet-group"
+    Name = "${var.project}-rds-subnet-group-${random_id.suffix.hex}"
   }
 }
 
