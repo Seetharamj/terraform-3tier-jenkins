@@ -1,5 +1,3 @@
-
-
 resource "aws_security_group" "app_sg" {
   name        = "my-3tier-app-app-sg-${var.environment}"
   description = "App tier security group"
