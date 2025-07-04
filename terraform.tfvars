@@ -11,7 +11,7 @@ azs = ["us-east-1a", "us-east-1b"]
 # EC2 Configuration
 ami_id = "ami-05ffe3c48a9991133"  # Amazon Linux 2 AMI (replace with your desired AMI)
 instance_type = "t3.micro"
-key_name = "your-key-pair-name"    # Replace with your EC2 key pair name
+key_name = "jenkins"    # Replace with your EC2 key pair name
 
 # Auto Scaling Configuration
 min_size = 1
