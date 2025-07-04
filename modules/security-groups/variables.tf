@@ -1,13 +1,14 @@
-variable "project" {
-  type = string
-}
-
 variable "vpc_id" {
-  description = "VPC ID where the SG will be created"
+  description = "VPC ID for the security group"
   type        = string
 }
 
 variable "environment" {
-  description = "Environment (e.g., dev, prod)"
+  description = "Deployment environment (e.g., dev, prod)"
+  type        = string
+}
+
+variable "project" {
+  description = "Project name or identifier"
   type        = string
 }
