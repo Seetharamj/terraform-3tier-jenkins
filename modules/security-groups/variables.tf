@@ -3,5 +3,11 @@ variable "project" {
 }
 
 variable "vpc_id" {
-  type = string
+  description = "VPC ID where the SG will be created"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment (e.g., dev, prod)"
+  type        = string
 }
